@@ -66,6 +66,7 @@ of the software.
 ***********************************************************************/
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <memory.h>
 #include <lfs.h>
 

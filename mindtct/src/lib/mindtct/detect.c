@@ -62,6 +62,7 @@ of the software.
 ***********************************************************************/
 
 #include <stdio.h>
+#include <string.h>
 #include <lfs.h>
 #include <mytime.h>
 #include <log.h>

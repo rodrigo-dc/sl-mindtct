@@ -65,15 +65,18 @@ of the software.
                         drawblocks()
                         drawrotgrid()
                         dump_link_table()
-                        draw_direction_map()
-                        draw_TF_map()
+
+	REMOVED TO REDUCE DEPENDENCIES
+         draw_direction_map()
+         draw_TF_map()
 
 ***********************************************************************/
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/param.h>
 #include <lfs.h>
-#include <sunrast.h>
 #include <defs.h>
 
 /*************************************************************************
@@ -700,134 +703,5 @@ void dump_link_table(FILE *fpout, const int *link_table,
       fprintf(fpout, "\n");
       sentry += tbldim;
    }
-}
-
-/*************************************************************************
-**************************************************************************
-#cat: draw_direction_map - Takes the input image and a list of block offsets
-#cat:            and draws a bar in each block of the image based on the
-#cat:            values of the passed Direction Map.  The resulting image
-#cat:            is written to a Sun Rasterfile of specified name.
-
-   Input:
-      direction-map - maps of blocks containing directional ridge flow
-      blkoffs    - list of pixel offsets to origin of each block in the image
-      mw         - width (in blocks) of the map
-      mh         - height (in blocks) of the map
-      blocksize  - the dimensions (in pixels) of each block
-      idata      - input image data to be annotated
-      iw         - width (in pixels) of the input image
-      ih         - height (in pixels) of the input image
-      flag       - flag to promote image from 6 to 8 bits
-   Output:
-      oname      - name of file to be written
-   Return Code:
-      Zero     - successful completion
-      Negative - system error
-**************************************************************************/
-int draw_direction_map(char *oname, int *direction_map,
-               int *blkoffs, const int mw, const int mh, const int blocksize,
-               unsigned char *idata, const int iw, const int ih,
-               const int flag)
-{
-   unsigned char *tdata;
-
-   tdata = (unsigned char *)malloc(iw*ih);
-   if(tdata == (unsigned char *)NULL){
-      fprintf(stderr, "ERROR : draw_direction_map : malloc : tdata\n");
-      return(-560);
-   }
-
-   memcpy(tdata, idata, iw*ih);
-   if(flag)
-      bits_6to8(tdata, iw, ih);
-
-   drawmap2(direction_map, blkoffs, mw, mh, tdata, iw, ih,
-             START_DIR_ANGLE, NUM_DIRECTIONS, blocksize);
-   WriteSunRaster(oname, tdata, iw, ih, 8);
-
-   free(tdata);
-
-   return(0);
-}
-
-/*************************************************************************
-**************************************************************************
-#cat: draw_TF_map - Takes the input image and a list of block offsets
-#cat:            and marks each block of the image if the corresponding
-#cat:            block is flagged in the passed map.  The resulting image
-#cat:            is written to a Sun Rasterfile of specified name.
-
-   Input:
-      map        - map of flagged image blocks
-      blkoffs    - list of pixel offsets to origin of each block in the image
-      mw         - width (in blocks) of the map
-      mh         - height (in blocks) of the map
-      blocksize  - the dimensions (in pixels) of each block
-      idata      - input image data to be annotated
-      iw         - width (in pixels) of the input image
-      ih         - height (in pixels) of the input image
-      flag       - flag to promote image from 6 to 8 bits
-   Output:
-      oname      - name of file to be written
-   Return Code:
-      Zero     - successful completion
-      Negative - system error
-**************************************************************************/
-int draw_TF_map(char *oname, int *map,
-                int *blkoffs, const int mw, const int mh, const int blocksize,
-                unsigned char *idata, const int iw, const int ih,
-                const int flag)
-{
-   unsigned char *tdata;
-   int bx, by, bi;
-   int *tmap;
-
-   tmap = (int *)malloc(mw*mh*sizeof(int));
-   if(tmap == (int *)NULL){
-      fprintf(stderr, "ERROR : draw_TF_map : malloc : tmap\n");
-      return(-570);
-   }
-
-   tdata = (unsigned char *)malloc(iw*ih);
-   memcpy(tdata, idata, iw*ih);
-   if(flag)
-      bits_6to8(tdata, iw, ih);
-   bi = 0;
-   for(by = 0; by < mh; by++){
-      for(bx = 0; bx < mw; bx++){
-         if(map[bi])
-            /* Draw horizontal line in block. */
-            tmap[bi] = 8;
-         else
-            /* Don't draw any line in block. */
-            tmap[bi] = INVALID_DIR;
-         bi++;
-      }
-   }
-   drawmap2(tmap, blkoffs, mw, mh, tdata, iw, ih,
-             START_DIR_ANGLE, NUM_DIRECTIONS, blocksize);
-   bi = 0;
-   for(by = 0; by < mh; by++){
-      for(bx = 0; bx < mw; bx++){
-         if(map[bi])
-            /* Draw vertical line in block. */
-            tmap[bi] = 0;
-
-         /* Otherwise, INVALID block already set. */
-
-         bi++;
-      }
-   }
-   drawmap2(tmap, blkoffs, mw, mh, tdata, iw, ih,
-             START_DIR_ANGLE, NUM_DIRECTIONS, blocksize);
-
-   /* By combining the 2 drawimaps, a plus is drawn in flagged blocks. */
-   WriteSunRaster(oname, tdata, iw, ih, 8);
-
-   free(tdata);
-   free(tmap);
-
-   return(0);
 }
 

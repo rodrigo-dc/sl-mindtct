@@ -88,6 +88,7 @@ of the software.
 ***********************************************************************/
 
 #include <stdio.h>
+#include <string.h>
 #include <lfs.h>
 #include <morph.h>
 #include <log.h>
