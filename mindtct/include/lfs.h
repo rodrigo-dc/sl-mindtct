@@ -66,7 +66,6 @@ of the software.
 
 #include <math.h>
 #include <stdio.h>
-#include <an2k.h>  /* Needed by to_type9.c */
 
 /*************************************************************************/
 /*        OUTPUT FILE EXTENSIONS                                         */
@@ -105,6 +104,11 @@ of the software.
 /*************************************************************************/
 /*        STRUCTURE DEFINITIONS                                          */
 /*************************************************************************/
+
+/* COPIED FROM bozorth.h */
+struct minutiae_struct {
+	int col[4];
+};
 
 /* Lookup tables for converting from integer directions */
 /* to angles in radians.                                */
@@ -857,8 +861,6 @@ extern int is_qmap_empty(int *, const int, const int);
 /* line.c */
 extern int line_points(int **, int **, int *,
                      const int, const int, const int, const int);
-extern int bresenham_line_points(int **, int **, int *,
-                     const int, const int, const int, const int);
 
 /* link.c */
 extern int link_minutiae(MINUTIAE *, unsigned char *, const int, const int,
@@ -990,7 +992,7 @@ extern int update_minutiae(MINUTIAE *, MINUTIA *, unsigned char *,
 extern int update_minutiae_V2(MINUTIAE *, MINUTIA *, const int, const int,
                      unsigned char *, const int, const int,
                      const LFSPARMS *);
-extern int sort_minutiae(MINUTIAE *, const int, const int);
+
 extern int sort_minutiae_y_x(MINUTIAE *, const int, const int);
 extern int sort_minutiae_x_y(MINUTIAE *, const int, const int);
 extern int rm_dup_minutiae(MINUTIAE *);
@@ -1148,23 +1150,13 @@ extern int write_text_results(char *, const int, const int, const int,
 extern int write_minutiae_XYTQ(char *ofile, const int,
                  const MINUTIAE *, const int, const int);
 extern void dump_map(FILE *, int *, const int, const int);
-extern int drawimap(int *, const int, const int, unsigned char *,
-                  const int, const int, const ROTGRIDS *, const int);
-extern void drawimap2(int *, const int *, const int, const int,
-                  unsigned char *, const int, const int,
-                 const double, const int, const int);
+
 extern void drawblocks(const int *, const int, const int,
                   unsigned char *, const int, const int, const int );
 extern int drawrotgrid(const ROTGRIDS *, const int, unsigned char *,
                   const int, const int, const int, const int);
 extern void dump_link_table(FILE *, const int *, const int *, const int *,
                   const int, const int, const int, const MINUTIAE *);
-extern int draw_direction_map(char *, int *,
-                  int *, const int, const int, const int,
-                  unsigned char *, const int, const int, const int);
-extern int draw_TF_map(char *, int *,
-                  int *, const int, const int, const int,
-                  unsigned char *, const int, const int, const int);
 
 /* ridges.c */
 extern int count_minutiae_ridges(MINUTIAE *,
@@ -1202,17 +1194,6 @@ extern void bubble_sort_int_inc_2(int *, int *, const int);
 extern void bubble_sort_double_inc_2(double *, int *, const int);
 extern void bubble_sort_double_dec_2(double *, int *,  const int);
 extern void bubble_sort_int_inc(int *, const int);
-
-/* to_type9.c */
-extern int minutiae2type_9(RECORD **, const int, MINUTIAE *, const int,
-                  const int, const double);
-extern int mintiae2field_12(FIELD **, MINUTIAE *, const int, const int,
-                  const double);
-
-/* update.c */
-extern int update_ANSI_NIST_lfs_results(ANSI_NIST *, MINUTIAE *,
-                                unsigned char *, const int, const int,
-                                const int, const double, const int, const int);
 
 /* util.c */
 extern int maxv(const int *, const int);
